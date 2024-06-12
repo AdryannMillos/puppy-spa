@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Appointment } from '../appointment/appointment.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity({ name: 'puppies' })
 export class Puppy {
@@ -16,4 +17,9 @@ export class Puppy {
 
   @Column()
   birthday: Date;
+
+  @OneToMany(() => Appointment, (appointment) => appointment.puppy, {
+    cascade: false,
+  })
+  appointment: Appointment;
 }

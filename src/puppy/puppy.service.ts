@@ -43,7 +43,10 @@ export class PuppyService {
 
   async getById(puppyId: number): Promise<Puppy> {
     try {
-      const puppy = await this.puppyRepository.findOneBy({ id: puppyId });
+      const puppy = await this.puppyRepository.findOne({
+        where: { id: puppyId },
+        relations: ['appointment'],
+      });
       if (!puppy) {
         throw new NotFoundException('Puppy not found.');
       }

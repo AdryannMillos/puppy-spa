@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Puppy } from '../puppy/puppy.entity';
 
-@Entity({ name: 'waiting_lists' })
-export class WaitingList {
+@Entity({ name: 'appointments' })
+export class Appointment {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,7 +16,7 @@ export class WaitingList {
   order: number;
 
   @Column()
-  serviceType: string;
+  service: string;
 
   @Column()
   arrivalTime: Date;

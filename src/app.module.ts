@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Puppy } from './puppy/puppy.entity';
-import { WaitingList } from './waiting-list/waiting-list.entity';
+import { Appointment } from './appointment/appointment.entity';
 import { PuppyModule } from './puppy/puppy.module';
-import { WaitingListModule } from './waiting-list/waiting-list.module';
+import { WaitingListModule } from './appointment/appointment.module';
 import { AuthModule } from './auth/auth.module';
 import { User } from './user/user.entity';
 import { UserModule } from './user/user.module';
@@ -19,7 +19,7 @@ dotenv.config();
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_DB_NAME,
-      entities: [Puppy, WaitingList, User],
+      entities: [Puppy, Appointment, User],
       synchronize: true,
     }),
     PuppyModule,
