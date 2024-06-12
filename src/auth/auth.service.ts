@@ -41,7 +41,7 @@ export class AuthService {
 
       return this.signToken(userFound);
     } catch (error) {
-      throw new ForbiddenException('Could not log in', error.message);
+      throw error;
     }
   }
 
