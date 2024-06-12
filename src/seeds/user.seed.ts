@@ -24,7 +24,7 @@ export default async function seed() {
         name: 'Alice',
         email: 'alice@example.com',
         password: 'password123',
-        role: 'user',
+        role: 'recepicionist',
       },
       {
         name: 'Bob',

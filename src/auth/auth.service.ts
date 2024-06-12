@@ -1,30 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../user/user.entity';
+import { AuthDto } from './dto';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly jwtService: JwtService,
+    private jwt: JwtService,
   ) {}
 
-  async validateUser(name: string, password: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ where: { name } });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      return user;
+  async signin(dto: AuthDto) {
+    try {
+      const userFound = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
+
+      if (!userFound) {
+        throw new ForbiddenException('Invalid credentials');
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        dto.password,
+        userFound.password,
+      );
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      return this.signToken(userFound);
+    } catch (error) {
+      throw new ForbiddenException('Could not log in', error.message);
     }
-    return null;
   }
 
-  async login(user: any) {
-    const payload = { username: user.username, sub: user.id, role: user.role };
+  async signToken(user: User): Promise<{ access_token: string }> {
+    const payload = { userId: user.id, email: user.email };
+    const token = await this.jwt.signAsync(payload, {
+      expiresIn: '60m',
+      secret: process.env.JWT_SECRET || 'secret',
+    });
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: token,
     };
   }
 }

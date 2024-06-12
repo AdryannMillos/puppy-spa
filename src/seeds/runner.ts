@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 
-// Get the seed file name from the environment variable
 const seedFile = process.env.npm_config_file;
 
 if (!seedFile) {
@@ -8,8 +7,7 @@ if (!seedFile) {
   process.exit(1);
 }
 
-// Resolve the full path to the seed file
-const seedFilePath = resolve(__dirname, seedFile); // Change this line
+const seedFilePath = resolve(__dirname, seedFile);
 
 async function runSeedFile() {
   try {
