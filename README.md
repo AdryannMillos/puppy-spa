@@ -7,14 +7,10 @@ Nest CLI: npm install -g @nestjs/cli
 Installation
 Clone the repository:
 
-bash
-Copiar código
 git clone https://github.com/AdryannMillos/puppy-spa.git
 cd puppy-spa
 Install dependencies:
 
-bash
-Copiar código
 npm install
 
 Configuration
@@ -23,8 +19,6 @@ The project uses environment variables for configuration. Create a .env file in 
 Running the Application
 To run the application locally, use the following command:
 
-bash
-Copiar código
 npm run start:dev
 This command starts the application in development mode and watches for any changes in your source files.
 
@@ -35,6 +29,4 @@ To run the tests, use the following commands:
 
 Unit tests:
 
-bash
-Copiar código
 npm run test
