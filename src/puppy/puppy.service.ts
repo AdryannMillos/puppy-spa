@@ -35,7 +35,7 @@ export class PuppyService {
 
   async getAll(): Promise<Puppy[]> {
     try {
-      return await this.puppyRepository.find();
+      return await this.puppyRepository.find({ relations: ['appointment'] });
     } catch (error) {
       throw new NotFoundException('Failed to get puppies.');
     }

@@ -166,8 +166,14 @@ describe('AppointmentService', () => {
       });
 
       expect(appointmentRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
-      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(1, 'appointment.attended = true');
-      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(2, 'appointment.attended = false');
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(
+        1,
+        'appointment.attended = true',
+      );
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(
+        2,
+        'appointment.attended = false',
+      );
     });
 
     it('should return attended and unattended appointments with date', async () => {
@@ -194,9 +200,18 @@ describe('AppointmentService', () => {
       });
 
       expect(appointmentRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
-      expect(queryBuilderMock.where).toHaveBeenCalledWith('appointment.date = :date', { date });
-      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(1, 'appointment.attended = true');
-      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(2, 'appointment.attended = false');
+      expect(queryBuilderMock.where).toHaveBeenCalledWith(
+        'appointment.date = :date',
+        { date },
+      );
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(
+        1,
+        'appointment.attended = true',
+      );
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(
+        2,
+        'appointment.attended = false',
+      );
     });
 
     it('should throw an error if query fails', async () => {
