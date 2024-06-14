@@ -73,10 +73,13 @@ export class AppointmentService {
       const attendedAppointments = await queryBuilder
         .clone()
         .andWhere('appointment.attended = true')
+        .orderBy('appointment.order', 'ASC')
         .getMany();
+
       const unattendedAppointments = await queryBuilder
         .clone()
         .andWhere('appointment.attended = false')
+        .orderBy('appointment.order', 'ASC')
         .getMany();
 
       return {

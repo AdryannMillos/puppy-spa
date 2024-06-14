@@ -27,4 +27,7 @@ export class AppointmentDto {
   @IsNumber()
   @IsNotEmpty()
   puppyId: number;
+
+  @IsOptional()
+  order?: number;
 }

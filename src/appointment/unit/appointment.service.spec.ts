@@ -17,8 +17,9 @@ const mockAppointmentRepository = () => ({
     leftJoinAndSelect: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
     clone: jest.fn().mockReturnThis(),
-    getMany: jest.fn().mockResolvedValue([]),
+    getMany: jest.fn(),
   }),
 });
 
@@ -149,7 +150,11 @@ describe('AppointmentService', () => {
       const attendedAppointments = [{ id: 1, attended: true }];
       const unattendedAppointments = [{ id: 2, attended: false }];
 
-      (appointmentRepository.createQueryBuilder().getMany as jest.Mock)
+      const queryBuilderMock = appointmentRepository.createQueryBuilder();
+      queryBuilderMock.andWhere
+        .mockReturnValueOnce(queryBuilderMock)
+        .mockReturnValueOnce(queryBuilderMock);
+      queryBuilderMock.getMany
         .mockResolvedValueOnce(attendedAppointments)
         .mockResolvedValueOnce(unattendedAppointments);
 
@@ -161,12 +166,8 @@ describe('AppointmentService', () => {
       });
 
       expect(appointmentRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
-      expect(
-        appointmentRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('appointment.attended = true');
-      expect(
-        appointmentRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('appointment.attended = false');
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(1, 'appointment.attended = true');
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(2, 'appointment.attended = false');
     });
 
     it('should return attended and unattended appointments with date', async () => {
@@ -174,7 +175,14 @@ describe('AppointmentService', () => {
       const attendedAppointments = [{ id: 1, attended: true, date }];
       const unattendedAppointments = [{ id: 2, attended: false, date }];
 
-      (appointmentRepository.createQueryBuilder().getMany as jest.Mock)
+      const queryBuilderMock = appointmentRepository.createQueryBuilder();
+      queryBuilderMock.where
+        .mockReturnValueOnce(queryBuilderMock)
+        .mockReturnValueOnce(queryBuilderMock);
+      queryBuilderMock.andWhere
+        .mockReturnValueOnce(queryBuilderMock)
+        .mockReturnValueOnce(queryBuilderMock);
+      queryBuilderMock.getMany
         .mockResolvedValueOnce(attendedAppointments)
         .mockResolvedValueOnce(unattendedAppointments);
 
@@ -186,22 +194,15 @@ describe('AppointmentService', () => {
       });
 
       expect(appointmentRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
-      expect(
-        appointmentRepository.createQueryBuilder().where,
-      ).toHaveBeenCalledWith('appointment.date = :date', { date });
-      expect(
-        appointmentRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('appointment.attended = true');
-      expect(
-        appointmentRepository.createQueryBuilder().andWhere,
-      ).toHaveBeenCalledWith('appointment.attended = false');
+      expect(queryBuilderMock.where).toHaveBeenCalledWith('appointment.date = :date', { date });
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(1, 'appointment.attended = true');
+      expect(queryBuilderMock.andWhere).toHaveBeenNthCalledWith(2, 'appointment.attended = false');
     });
 
     it('should throw an error if query fails', async () => {
       const errorMessage = 'Database error';
-      (
-        appointmentRepository.createQueryBuilder().getMany as jest.Mock
-      ).mockRejectedValue(new Error(errorMessage));
+      const queryBuilderMock = appointmentRepository.createQueryBuilder();
+      queryBuilderMock.getMany.mockRejectedValue(new Error(errorMessage));
 
       await expect(service.getAll()).rejects.toThrow(errorMessage);
     });
@@ -229,6 +230,14 @@ describe('AppointmentService', () => {
       appointmentRepository.save.mockResolvedValue(appointment);
 
       expect(await service.update(id, appointmentDto)).toEqual(appointment);
+      expect(appointmentRepository.findOne).toHaveBeenCalledWith({
+        where: { id },
+        relations: ['puppy'],
+      });
+      expect(appointmentRepository.save).toHaveBeenCalledWith({
+        ...appointment,
+        ...appointmentDto,
+      });
     });
 
     it('should throw a NotFoundException if appointment is not found', async () => {
